@@ -1,6 +1,8 @@
+# This script adds site, app-pool, app-folder and host-entry for IIS
+
 # CONFIG ####################
-$appname = "locala-service-orderinventory.vxa.se"
-$appfolder = "c:\repos\MyProject";
+$appname = "local-web.mydomain.com"
+$appfolder = "c:\repos\myproject";
 $owerwritexisting = "true";
 # CONFIG ####################
 
