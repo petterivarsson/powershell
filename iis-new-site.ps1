@@ -1,6 +1,6 @@
 # CONFIG ####################
 $appname = "locala-service-orderinventory.vxa.se"
-$appfolder = "C:\Projects\VaxaSverige\Domain\MyProject";
+$appfolder = "c:\repos\MyProject";
 $owerwritexisting = "true";
 # CONFIG ####################
 
