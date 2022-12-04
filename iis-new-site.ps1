@@ -31,7 +31,7 @@ Write-Host "Checking appfolder"
 if(-Not (Test-Path $appfolder ))
 {
     Write-Host "Making $appfolder"
-    New-item â€“itemtype directory $appfolder
+    New-item –itemtype directory $appfolder
 }
 
 # site
@@ -45,5 +45,9 @@ if ($el.length -eq 0){
     Write-Host "Writing to host-file"
     Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "$([Environment]::NewLine)127.0.0.1   $appname"
 }
+
+# browse to the site
+Write-Host "Opening site"
+Start-Process "http://$appname"
 
 Write-Host "DONE"
