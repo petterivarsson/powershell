@@ -1,55 +1,59 @@
 # This script adds site, app-pool, app-folder and host-entry for IIS
+import-module WebAdministration
 
 # CONFIG ####################
 $appname = "local-web.mydomain.com"
 $appfolder = "c:\repos\myproject";
-$owerwritexisting = "true";
+$owerwriteApp = "true";
+$poolname = "local-no-managed-code";
+$hostfile = "C:\Windows\System32\drivers\etc\hosts";
 # CONFIG ####################
 
 
-import-module WebAdministration
-Write-Host $appname
-Write-Host $appfolder
-
-# exit if user do not want to owervrite existing
-if ( (Test-Path IIS:\Sites\$($appname)) -and ($owerwritexisting -eq 'false') ) { 
-    
-    Write-Host "$appname already exists, change flag 'owerwritexisting' if needed "
-    return
+# exit if user do not want to owervrite existing 
+if ( (Test-Path IIS:\Sites\$appname) -and ($owerwriteApp -eq 'false') ) { 
+    Write-Host "$appname already exists, change flag 'owerwriteApp' if needed "
+    return;
 }
 
-# app-pool
-if(Test-Path IIS:\AppPools\$($appname))
+
+Write-Host "Checking Application Pool";
+if(-Not (Test-Path IIS:\AppPools\$poolname))
 {
-    Remove-WebAppPool $appname
+    #Remove-WebAppPool $appname
+    Write-Host "Making AppPool $poolname"
+    $pool = New-WebAppPool -Name $poolname -Force 
+    $pool.autoStart = "true"
+    $pool.managedRuntimeVersion = "No Managed Code"    
 }
-Write-Host "Making AppPool"
-$pool = New-WebAppPool -Name $appname -Force 
-$pool.autoStart = "true"
-$pool.managedRuntimeVersion = "No Managed Code"
 
 # app-folder
 Write-Host "Checking appfolder"
 if(-Not (Test-Path $appfolder ))
 {
     Write-Host "Making $appfolder"
-    New-item –itemtype directory $appfolder
+    New-item -ItemType directory $appfolder
 }
 
+
 # site
-Write-Host "Making Site"
-$site = New-WebSite -Force -Name $appname -Port 80 -HostHeader $appname -PhysicalPath $appfolder -ApplicationPool $appname 
+Write-Host "Making Site $appname"
+$site = New-WebSite -Force -Name $appname -Port 80 -HostHeader $appname -PhysicalPath $appfolder -ApplicationPool $poolname 
 
 # host-file
 Write-Host "Checking hostfile"
-$el = Select-String -Path C:\Windows\System32\drivers\etc\hosts -Pattern $appname
+$el = Select-String -Path $hostfile -Pattern $appname
 if ($el.length -eq 0){
     Write-Host "Writing to host-file"
-    Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "$([Environment]::NewLine)127.0.0.1   $appname"
+    Add-Content -Path $hostfile -Value "$([Environment]::NewLine)127.0.0.1   $appname"
 }
+
 
 # browse to the site
 Write-Host "Opening site"
 Start-Process "http://$appname"
+
+Start-Process notepad $hostfile
+
 
 Write-Host "DONE"
