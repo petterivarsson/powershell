@@ -11,14 +11,15 @@ $hostfile = "C:\Windows\System32\drivers\etc\hosts";
 
 
 # exit if user do not want to owervrite existing 
-if ( (Test-Path IIS:\Sites\$appname) -and ($owerwriteApp -eq 'false') ) { 
+if ( (Test-Path IIS:\Sites\$appname) -and ($owerwriteApp -eq 'false') ) 
+{ 
     Write-Host "$appname already exists, change flag 'owerwriteApp' if needed "
     return;
 }
 
-
+# application pool
 Write-Host "Checking Application Pool";
-if(-Not (Test-Path IIS:\AppPools\$poolname))
+if(-Not (Test-Path IIS:\AppPools\$poolname)) 
 {
     #Remove-WebAppPool $appname
     Write-Host "Making AppPool $poolname"
@@ -35,7 +36,6 @@ if(-Not (Test-Path $appfolder ))
     New-item -ItemType directory $appfolder
 }
 
-
 # site
 Write-Host "Making Site $appname"
 $site = New-WebSite -Force -Name $appname -Port 80 -HostHeader $appname -PhysicalPath $appfolder -ApplicationPool $poolname 
@@ -48,12 +48,8 @@ if ($el.length -eq 0){
     Add-Content -Path $hostfile -Value "$([Environment]::NewLine)127.0.0.1   $appname"
 }
 
-
-# browse to the site
+# browse to the site and show the host-file
 Write-Host "Opening site"
 Start-Process "http://$appname"
-
 Start-Process notepad $hostfile
-
-
 Write-Host "DONE"
