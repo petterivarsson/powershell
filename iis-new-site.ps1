@@ -7,7 +7,17 @@ $appfolder = "C:\Projects\myapp";
 $owerwriteApp = "true";
 $poolname = "local-no-managed-code";
 $hostfile = "C:\Windows\System32\drivers\etc\hosts";
+$openhostfile = "false";
 # CONFIG ####################
+
+if($openhostfile -eq 'true'){
+    Write-Host "open"
+}
+else 
+{
+    Write-Host "no open"
+}
+return;
 
 
 # exit if user do not want to owervrite existing 
@@ -49,8 +59,13 @@ if ($el.length -eq 0){
     Add-Content -Path $hostfile -Value "$([Environment]::NewLine)127.0.0.1   $appname"
 }
 
-# browse to the site and show the host-file
+# browse to the site
 Write-Host "Opening site"
 Start-Process "http://$appname"
-Start-Process notepad $hostfile
+
+# show the host-file
+if($openhostfile -eq 'true'){
+    Start-Process notepad $hostfile
+}
+
 Write-Host "DONE"
