@@ -2,8 +2,8 @@
 import-module WebAdministration
 
 # CONFIG ####################
-$appname = "local-web.mydomain.com"
-$appfolder = "c:\repos\myproject";
+$appname = "myapp"
+$appfolder = "C:\Projects\myapp";
 $owerwriteApp = "true";
 $poolname = "local-no-managed-code";
 $hostfile = "C:\Windows\System32\drivers\etc\hosts";
@@ -27,6 +27,7 @@ if(-Not (Test-Path IIS:\AppPools\$poolname))
     $pool.autoStart = "true"
     $pool.managedRuntimeVersion = "No Managed Code"    
 }
+Start-WebAppPool -Name $poolname
 
 # app-folder
 Write-Host "Checking appfolder"
