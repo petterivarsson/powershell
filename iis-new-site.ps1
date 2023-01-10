@@ -2,28 +2,19 @@
 import-module WebAdministration
 
 # CONFIG ####################
-$appname = "myapp"
-$appfolder = "C:\Projects\myapp";
-$owerwriteApp = "true";
+$sitename = "local-myapp.se"
+$sitefolder = "C:\Projects\myapp";
+$owerwritesite = "true"; # true/false
 $poolname = "local-no-managed-code";
 $hostfile = "C:\Windows\System32\drivers\etc\hosts";
-$openhostfile = "false";
+$openhostfile = "false"; # true/false
 # CONFIG ####################
-
-if($openhostfile -eq 'true'){
-    Write-Host "open"
-}
-else 
-{
-    Write-Host "no open"
-}
-return;
 
 
 # exit if user do not want to owervrite existing 
-if ( (Test-Path IIS:\Sites\$appname) -and ($owerwriteApp -eq 'false') ) 
+if ( (Test-Path IIS:\Sites\$sitename) -and ($owerwritesite -eq 'false') ) 
 { 
-    Write-Host "$appname already exists, change flag 'owerwriteApp' if needed "
+    Write-Host "$sitename already exists, change flag 'owerwritesite' if needed "
     return;
 }
 
@@ -31,7 +22,7 @@ if ( (Test-Path IIS:\Sites\$appname) -and ($owerwriteApp -eq 'false') )
 Write-Host "Checking Application Pool";
 if(-Not (Test-Path IIS:\AppPools\$poolname)) 
 {
-    #Remove-WebAppPool $appname
+    #Remove-WebAppPool $sitename
     Write-Host "Making AppPool $poolname"
     $pool = New-WebAppPool -Name $poolname -Force 
     $pool.autoStart = "true"
@@ -40,28 +31,29 @@ if(-Not (Test-Path IIS:\AppPools\$poolname))
 Start-WebAppPool -Name $poolname
 
 # app-folder
-Write-Host "Checking appfolder"
-if(-Not (Test-Path $appfolder ))
+Write-Host "Checking sitefolder"
+if(-Not (Test-Path $sitefolder ))
 {
-    Write-Host "Making $appfolder"
-    New-item -ItemType directory $appfolder
+    Write-Host "Making $sitefolder"
+    New-item -ItemType directory $sitefolder
 }
 
 # site
-Write-Host "Making Site $appname"
-$site = New-WebSite -Force -Name $appname -Port 80 -HostHeader $appname -PhysicalPath $appfolder -ApplicationPool $poolname 
+Write-Host "Making Site $sitename"
+$site = New-WebSite -Force -Name $sitename -Port 80 -HostHeader $sitename -PhysicalPath $sitefolder -ApplicationPool $poolname 
+Start-WebSite -Name $sitename
 
 # host-file
 Write-Host "Checking hostfile"
-$el = Select-String -Path $hostfile -Pattern $appname
+$el = Select-String -Path $hostfile -Pattern $sitename
 if ($el.length -eq 0){
     Write-Host "Writing to host-file"
-    Add-Content -Path $hostfile -Value "$([Environment]::NewLine)127.0.0.1   $appname"
+    Add-Content -Path $hostfile -Value "$([Environment]::NewLine)127.0.0.1   $sitename"
 }
 
 # browse to the site
 Write-Host "Opening site"
-Start-Process "http://$appname"
+Start-Process "http://$sitename"
 
 # show the host-file
 if($openhostfile -eq 'true'){
