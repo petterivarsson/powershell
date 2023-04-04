@@ -1,11 +1,10 @@
 import-module WebAdministration
 
 # CONFIG ##################################
-$smtpServer = "smtp.konet.se"
+$smtpServer = "smtp.domain.se"
 $smtpPort = 25
-$from = "10sr0290-prod@konet.se"
+$from = "user@someone.com"
 #$to = drift@vxa.se
-$to = "petter.ivarsson@vxa.se"
 $subject = "IIS Application Error on " + $env:COMPUTERNAME
 $sendmail = "true"; # true/false
 
