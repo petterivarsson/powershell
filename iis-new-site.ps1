@@ -2,8 +2,8 @@
 import-module WebAdministration
 
 # CONFIG ####################
-$sitename = "local-myapp.se"
-$sitefolder = "C:\Projects\myapp";
+$sitename = "local-embryofrontend.vxa.se"
+$sitefolder = "C:\Projects\EmbryoService.FrontEnd";
 $owerwritesite = "true"; # true/false
 $poolname = "local-no-managed-code";
 $hostfile = "C:\Windows\System32\drivers\etc\hosts";
